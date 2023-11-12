@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Toma_Alexandru_Lab2.Data;
 
@@ -11,9 +12,10 @@ using Toma_Alexandru_Lab2.Data;
 namespace Toma_Alexandru_Lab2.Migrations
 {
     [DbContext(typeof(Toma_Alexandru_Lab2Context))]
-    partial class Toma_Alexandru_Lab2ContextModelSnapshot : ModelSnapshot
+    [Migration("20231024162250_BookCategory")]
+    partial class BookCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,27 +23,6 @@ namespace Toma_Alexandru_Lab2.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Author", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Author");
-                });
 
             modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Book", b =>
                 {
@@ -51,11 +32,9 @@ namespace Toma_Alexandru_Lab2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<int>("AuthorID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BorrowingID")
-                        .HasColumnType("int");
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(6,2)");
@@ -71,8 +50,6 @@ namespace Toma_Alexandru_Lab2.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("AuthorID");
 
                     b.HasIndex("PublisherID");
 
@@ -102,34 +79,6 @@ namespace Toma_Alexandru_Lab2.Migrations
                     b.ToTable("BookCategory");
                 });
 
-            modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Borrowing", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
-
-                    b.Property<int?>("BookID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MemberID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ReturnDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("BookID")
-                        .IsUnique()
-                        .HasFilter("[BookID] IS NOT NULL");
-
-                    b.HasIndex("MemberID");
-
-                    b.ToTable("Borrowing");
-                });
-
             modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Category", b =>
                 {
                     b.Property<int>("ID")
@@ -145,35 +94,6 @@ namespace Toma_Alexandru_Lab2.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Member", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
-
-                    b.Property<string>("Adress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Publisher", b =>
@@ -195,17 +115,9 @@ namespace Toma_Alexandru_Lab2.Migrations
 
             modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Book", b =>
                 {
-                    b.HasOne("Toma_Alexandru_Lab2.Models.Author", "Author")
-                        .WithMany("Books")
-                        .HasForeignKey("AuthorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Toma_Alexandru_Lab2.Models.Publisher", "Publisher")
                         .WithMany("Books")
                         .HasForeignKey("PublisherID");
-
-                    b.Navigation("Author");
 
                     b.Navigation("Publisher");
                 });
@@ -229,41 +141,14 @@ namespace Toma_Alexandru_Lab2.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Borrowing", b =>
-                {
-                    b.HasOne("Toma_Alexandru_Lab2.Models.Book", "Book")
-                        .WithOne("Borrowing")
-                        .HasForeignKey("Toma_Alexandru_Lab2.Models.Borrowing", "BookID");
-
-                    b.HasOne("Toma_Alexandru_Lab2.Models.Member", "Member")
-                        .WithMany("Borrowings")
-                        .HasForeignKey("MemberID");
-
-                    b.Navigation("Book");
-
-                    b.Navigation("Member");
-                });
-
-            modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Author", b =>
-                {
-                    b.Navigation("Books");
-                });
-
             modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Book", b =>
                 {
                     b.Navigation("BookCategories");
-
-                    b.Navigation("Borrowing");
                 });
 
             modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Category", b =>
                 {
                     b.Navigation("BookCategories");
-                });
-
-            modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Member", b =>
-                {
-                    b.Navigation("Borrowings");
                 });
 
             modelBuilder.Entity("Toma_Alexandru_Lab2.Models.Publisher", b =>
